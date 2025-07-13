@@ -1,8 +1,16 @@
-<h1>教材一覧</h1>
-<ul>
-  {% for material in materials %}
-    <li>
-      <a href="{% url 'material_detail' material.pk %}">{{ material.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
+{% extends 'core/base.html' %}
+
+{% block title %}教材一覧{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">教材一覧</h1>
+  <ul class="list-group">
+    {% for material in materials %}
+      <li class="list-group-item">
+        <a href="{% url 'material_detail' material.pk %}">{{ material.title }}</a>
+      </li>
+    {% empty %}
+      <li class="list-group-item">教材が登録されていません。</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

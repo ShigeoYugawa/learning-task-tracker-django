@@ -1,20 +1,12 @@
-{% load static %}
+{% extends 'core/base.html' %}
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>学習タスク管理アプリ</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">ようこそ！</h1>
-        <p>このアプリでは、教材や授業、学習進捗の管理ができます。</p>
+{% block title %}ホーム | 学習タスク管理アプリ{% endblock %}
 
-        <div class="mt-4">
-            <a class="btn btn-primary" href="{% url 'material_list' %}">教材一覧</a>
-        </div>
-    </div>
-</body>
-</html>
+{% block content %}
+  <h1 class="mb-4">ようこそ！</h1>
+  <p>このアプリでは、教材や授業、学習進捗の管理ができます。</p>
+
+  <div class="mt-4">
+      <a class="btn btn-primary" href="{% url 'material_list' %}">教材一覧</a>
+  </div>
+{% endblock %}

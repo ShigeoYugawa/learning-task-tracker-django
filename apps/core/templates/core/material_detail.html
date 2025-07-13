@@ -1,9 +1,19 @@
-<h1>{{ material.title }}</h1>
-<p>{{ material.description }}</p>
+{% extends 'core/base.html' %}
 
-<h2>授業一覧</h2>
-<ul>
-  {% for lesson in material.lesson_set.all %}
-    <li><a href="{% url 'lesson_detail' lesson.pk %}">{{ lesson.title }}</a></li>
-  {% endfor %}
-</ul>
+{% block title %}{{ material.title }}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">{{ material.title }}</h1>
+  <p class="mb-4">{{ material.description }}</p>
+
+  <h2 class="mb-3">授業一覧</h2>
+  <ul class="list-group">
+    {% for lesson in material.lesson_set.all %}
+      <li class="list-group-item">
+        <a href="{% url 'lesson_detail' lesson.pk %}">{{ lesson.title }}</a>
+      </li>
+    {% empty %}
+      <li class="list-group-item">授業がありません。</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,2 +1,12 @@
-<h1>{{ lesson.title }}</h1>
-<p>{{ lesson.description }}</p>
+{% extends 'core/base.html' %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+  <h1 class="mb-3">{{ lesson.title }}</h1>
+  {% if lesson.description %}
+    <p>{{ lesson.description }}</p>
+  {% else %}
+    <p>この授業には説明がありません。</p>
+  {% endif %}
+{% endblock %}

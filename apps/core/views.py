@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.decorators import login_required
 from .models import Material, Lesson
 
 class MaterialListView(ListView):
@@ -17,5 +18,6 @@ class LessonDetailView(DetailView):
     template_name = 'core/lesson_detail.html'
     context_object_name = 'lesson'
 
+@login_required
 def home(request):
     return render(request, 'core/home.html')
