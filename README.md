@@ -91,7 +91,7 @@ django-admin startproject learning_task_tracker .
 
 ```bash
 python manage.py runserver
-# http://127.0.0.1:8000 にアクセスしてDjangoのWelcomeページを確認
+# http://127.0.0.1:8000 にアクセスしてホーム画面（home.html）を確認
 ```
 ### 6. GitHub リポジトリとの連携
 
@@ -135,3 +135,13 @@ git push -u origin main
 
 を目的としています。  
 学習段階としては基礎の積み重ねが重要であり、これが将来的により高度な業務アプリケーション開発への糧となることを目指しています。
+
+---
+
+## 実装済みの主な機能
+
+- トップページ（ホーム）表示
+- 教材（Material）一覧／詳細表示
+- 授業（Lesson）詳細表示
+- 画面テンプレートにBootstrap導入
+

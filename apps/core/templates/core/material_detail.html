@@ -1,0 +1,9 @@
+<h1>{{ material.title }}</h1>
+<p>{{ material.description }}</p>
+
+<h2>授業一覧</h2>
+<ul>
+  {% for lesson in material.lesson_set.all %}
+    <li><a href="{% url 'lesson_detail' lesson.pk %}">{{ lesson.title }}</a></li>
+  {% endfor %}
+</ul>

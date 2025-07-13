@@ -1,0 +1,8 @@
+<h1>教材一覧</h1>
+<ul>
+  {% for material in materials %}
+    <li>
+      <a href="{% url 'material_detail' material.pk %}">{{ material.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
