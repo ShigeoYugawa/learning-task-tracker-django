@@ -140,8 +140,9 @@ git push -u origin main
 
 ## 実装済みの主な機能
 
-- トップページ（ホーム）表示
-- 教材（Material）一覧／詳細表示
-- 授業（Lesson）詳細表示
-- 画面テンプレートにBootstrap導入
+- トップページ（ホーム）表示（共通レイアウトに対応）
+- 教材（Material）一覧／詳細表示（base.htmlに統一）
+- 授業（Lesson）詳細表示（base.htmlに統一）
+- ログイン／ログアウト機能（Django組み込みビューを利用、ログアウトはPOST対応）
+- 画面テンプレートに Bootstrap を導入し、UIを改善
 
