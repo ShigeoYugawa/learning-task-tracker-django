@@ -1,148 +1,55 @@
-# 学習タスク管理アプリ（PoC）
+# Learning Task Tracker (Django版)
 
-このリポジトリは、Djangoフレームワークを使った学習用Webアプリケーションの**概念実証（Proof of Concept）**です。  
-教材、授業、学習進捗などを管理する機能のプロトタイプ実装を目的としています。
+このリポジトリは、**学習タスク管理アプリのPoC（概念実証）として、Djangoで開発したテンプレートベースのWebアプリケーション**です。
 
----
-
-## 目的
-
-- Djangoの基本機能（Model、View、Template、ORMなど）を理解する  
-- Webアプリ開発の全体的な流れを学習する  
-- 今後の拡張やリファクタリングを見据えた「土台」を構築する  
+現在は、よりモダンで拡張性の高い構成を目指し、FastAPIをベースとした実装（[learning-task-tracker-fastapi](https://github.com/ShigeoYugawa/learning-task-tracker-fastapi)）に開発の主軸を移しています。
 
 ---
 
-## 注意点
+## 🧭 このDjango版の位置づけ
 
-- 本プロジェクトはPoCのため、アーキテクチャ設計（MVPなど）やユニットテストは未導入です。  
-- コードは最小構成かつ学習優先で記述しています。  
-- 今後、設計改善、テスト導入、パフォーマンス最適化を計画しています。  
-
----
-
-## 環境構築手順（WSL + venv）
-
-このアプリケーションは、**Windows 上での WSL（Ubuntu）環境 + VSCode + Django**による開発を前提としています。
-
-### 0. WSL の有効化と Ubuntu のインストール（初回のみ）
-
-#### 1. PowerShell（管理者）で以下を実行：
-
-```powershell
-wsl --install
-```
-
-#### 2. 自動的に Ubuntu がインストールされ、PCの再起動が求められます。
-
-#### 3. 再起動後、初回の Ubuntu 起動時に ユーザー名とパスワードを設定します。
-
-#### 4. インストール確認：
-
-```powershell
-wsl --list --verbose
-```
-
-### 1. VSCode に WSL 拡張機能をインストール
-
-#### 1. VSCode を起動
-
-#### 2. 拡張機能パネルで下記項目を検索し、インストール
-
-| 拡張機能名                  | 用途             |
-| ---------------------- | -------------- |
-| Remote - Development   | WSL接続やSSH開発に必要 |
-| Python                 | Django開発に必須    |
-| Japanese Language Pack | 日本語UI（任意）      |
-
-### 2. WSL に接続し、プロジェクトディレクトリを作成
-
-#### 1. VSCode 左下の緑の「><」アイコンをクリック
-
-#### 2. 「ディストリビューションを使用してWSLに接続...」]
-
-#### 3. WSLのターミナルで以下を実行：
-
-```bash
-wsl
-mkdir -p ~/projects/learning-task-tracker
-cd ~/projects/learning-task-tracker
-```
-
-### 3. Python 仮想環境を作成・有効化
-
-```bash
-sudo apt update
-sudo apt install python3-venv -y
-
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 4. Djangoのインストールと初期化
-
-```bash
-pip install django
-python -m django --version
-django-admin startproject learning_task_tracker .
-```
-
-### 5. 動作確認
-
-```bash
-python manage.py runserver
-# http://127.0.0.1:8000 にアクセスしてホーム画面（home.html）を確認
-```
-### 6. GitHub リポジトリとの連携
-
-```bash
-# GitHubのユーザー名とメールアドレスを設定（初回のみ必要）
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
-
-# Git 初期化とリモート設定
-git init
-git remote add origin https://github.com/YOUR_USERNAME/learning-task-tracker.git
-
-# 初回コミットとプッシュ
-git add .
-git commit -m "Initial Django project setup"
-git push -u origin main
-
-```
-
-### 7. VSCode の Python インタプリタ選択
-画面右下に表示される Python バージョンをクリックし、.venv/bin/python を選択してください。表示されない場合は、コマンドパレット（Ctrl+Shift+P）で Python: Select Interpreter を実行します。
-
+- Webアプリ開発の基礎理解と、Python + Django の復習・実践のために構築した学習用PoCです。
+- 認証やフォームの活用といった機能は未実装ですが、**DjangoのMVC構成とCRUDの基本実装**に焦点を当てています。
+- このリポジトリは、**FastAPI版へ移行する前段階の学習成果**として、記録的に残しています。
 
 ---
 
-## 今後の予定
+## ✅ 実装済の機能（PoC範囲）
 
-- 学習タスク管理に関わる基本的なCRUD操作を通じて、Djangoのモデル間の関連付けを理解し実装する  
-- ユーザーインターフェースの充実と使いやすさの向上を目指す  
-- 学習進捗の管理や教材・授業の紐付けなど、実務に近い機能の追加を予定  
-- 逐次、テスト導入や設計改善、パフォーマンス最適化にも取り組む  
-
----
-
-## 本プロジェクトの価値について
-
-本プロジェクトは単なるCRUD操作の実装にとどまらず、  
-- データモデルの設計と関係性の理解  
-- 実際に動くWebアプリケーションの構築経験  
-- 今後の機能拡張やリファクタリングを見据えた土台作り  
-
-を目的としています。  
-学習段階としては基礎の積み重ねが重要であり、これが将来的により高度な業務アプリケーション開発への糧となることを目指しています。
+- 学習タスクの一覧表示・登録・編集・削除（CRUD）
+- Djangoテンプレートによる基本的なUI構成
+- SQLiteを用いたシンプルなデータ永続化
 
 ---
 
-## 実装済みの主な機能
+## 🛠 未実装・今後の補完はFastAPI版で対応予定
 
-- トップページ（ホーム）表示（共通レイアウトに対応）
-- 教材（Material）一覧／詳細表示（base.htmlに統一）
-- 授業（Lesson）詳細表示（base.htmlに統一）
-- ログイン／ログアウト機能（Django組み込みビューを利用、ログアウトはPOST対応）
-- 画面テンプレートに Bootstrap を導入し、UIを改善
+- ユーザー登録・ログイン認証
+- Djangoフォーム（ModelForm）の活用
+- フロントエンド分離構成（SPA対応）
+- RESTful API化
+- CI/CD・テスト自動化
 
+これらはすべて、[learning-task-tracker-fastapi](https://github.com/ShigeoYugawa/learning-task-tracker-fastapi) にて順次対応・設計中です。
+
+---
+
+## 📚 開発環境
+
+- Python 3.12.3
+- Django 5.2.4
+- SQLite（開発用DB）
+
+---
+
+## 📝 補足と所感
+
+本プロジェクトは、C# × Unity による長期的な個人開発経験をベースに、**Webアプリケーション領域へと実践を広げる第一歩**として開発しました。
+
+FastAPIを本業軸としながらも、DjangoによるWeb構築の土台理解は、今後の設計にも大きな土台となっています。
+
+---
+
+## 📎 関連プロジェクト
+
+- 🚀 [learning-task-tracker-fastapi](https://github.com/あなたのFastAPIリポジトリURL) — 本格的なAPI分離構成を目指すFastAPI版
