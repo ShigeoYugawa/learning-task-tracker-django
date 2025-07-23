@@ -1,55 +1,52 @@
 # Learning Task Tracker (Django版)
 
-このリポジトリは、**学習タスク管理アプリのPoC（概念実証）として、Djangoで開発したテンプレートベースのWebアプリケーション**です。
+このリポジトリは、**学習タスク管理アプリのPoC（概念実証）としてDjangoで開発したテンプレートベースのWebアプリケーション**です。
 
-現在は、よりモダンで拡張性の高い構成を目指し、FastAPIをベースとした実装（[learning-task-tracker-fastapi](https://github.com/ShigeoYugawa/learning-task-tracker-fastapi)）に開発の主軸を移しています。
-
----
-
-## 🧭 このDjango版の位置づけ
-
-- Webアプリ開発の基礎理解と、Python + Django の復習・実践のために構築した学習用PoCです。
-- 認証やフォームの活用といった機能は未実装ですが、**DjangoのMVC構成とCRUDの基本実装**に焦点を当てています。
-- このリポジトリは、**FastAPI版へ移行する前段階の学習成果**として、記録的に残しています。
+現在はDjangoでの学習を再開しており、基礎の理解を深めながら機能拡張を進めています。
 
 ---
 
-## ✅ 実装済の機能（PoC範囲）
+## 🧭 Django版の位置づけ
 
-- 学習タスクの一覧表示・登録・編集・削除（CRUD）
-- Djangoテンプレートによる基本的なUI構成
-- SQLiteを用いたシンプルなデータ永続化
+- DjangoのMVC構成やCRUD処理の理解を深めることを目的に構築した学習用PoCです。  
+- ユーザー登録や認証などの機能は未実装ですが、今後フォーム処理や認証機能の実装も進める予定です。  
+- 将来的にはFastAPI版などモダンなAPI分離構成への展開も視野に入れていますが、まずはDjango版で基礎固めを優先しています。
 
 ---
 
-## 🛠 未実装・今後の補完はFastAPI版で対応予定
+## ✅ 現在の実装済み機能
 
-- ユーザー登録・ログイン認証
-- Djangoフォーム（ModelForm）の活用
-- フロントエンド分離構成（SPA対応）
-- RESTful API化
-- CI/CD・テスト自動化
+- 学習タスクの一覧表示、登録、編集、削除（CRUD）  
+- Djangoテンプレートを用いた基本的な画面表示  
+- SQLiteによるシンプルなデータ永続化
 
-これらはすべて、[learning-task-tracker-fastapi](https://github.com/ShigeoYugawa/learning-task-tracker-fastapi) にて順次対応・設計中です。
+---
+
+## 🛠 今後の開発予定（Django版）
+
+- Djangoフォーム（ModelForm）を使った入力処理の強化  
+- ユーザー登録・ログイン認証機能の実装  
+- テストコードの整備とCI/CDパイプラインの構築  
+- 必要に応じてREST API化やフロントエンド分離構成の検討  
 
 ---
 
 ## 📚 開発環境
 
-- Python 3.12.3
-- Django 5.2.4
-- SQLite（開発用DB）
+- Python 3.12.3  
+- Django 5.2.4  
+- SQLite（開発用DB）  
 
 ---
 
-## 📝 補足と所感
+## 📝 補足・所感
 
-本プロジェクトは、C# × Unity による長期的な個人開発経験をベースに、**Webアプリケーション領域へと実践を広げる第一歩**として開発しました。
+本プロジェクトは、長年のC# × Unityでの開発経験を活かし、PythonとDjangoでのWebアプリケーション開発を再学習するためのPoCです。
 
-FastAPIを本業軸としながらも、DjangoによるWeb構築の土台理解は、今後の設計にも大きな土台となっています。
+Djangoでの開発を通じてWebの基本を固め、将来的にはFastAPIやフロントエンド技術も取り入れて拡張していきます。
 
 ---
 
 ## 📎 関連プロジェクト
 
-- 🚀 [learning-task-tracker-fastapi](https://github.com/あなたのFastAPIリポジトリURL) — 本格的なAPI分離構成を目指すFastAPI版
+- 🚀 [learning-task-tracker-fastapi](https://github.com/ShigeoYugawa/learning-task-tracker-fastapi) — API分離構成を目指すFastAPI版
