@@ -1,3 +1,5 @@
+#settings.py
+
 """
 Django settings for learning_task_tracker project.
 

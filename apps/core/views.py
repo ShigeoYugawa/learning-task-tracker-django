@@ -1,3 +1,5 @@
+#apps/core/views.py
+
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required

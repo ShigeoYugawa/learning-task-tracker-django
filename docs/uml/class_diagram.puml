@@ -1,0 +1,85 @@
+@startuml
+
+' --- Models
+package "apps.core.models" {
+    class Material {
+        +title: str
+        +description: str
+    }
+
+    class Lesson {
+        +material: Material
+        +title: str
+        +order: int
+    }
+
+    class Progress {
+        +lesson: Lesson
+        +date: date
+        +status: str
+    }
+}
+
+' --- Views
+package "apps.core.views" {
+    class MaterialListView
+    class MaterialDetailView
+    class LessonDetailView
+    class home
+}
+
+' --- Templates
+package "apps.core.templates.core" {
+    class base_html
+    class home_html
+    class material_list_html
+    class material_detail_html
+    class lesson_detail_html
+    class login_html
+}
+
+' --- URL routing
+package "apps.core" {
+    class core_urls_py
+}
+
+package "learning_task_tracker" {
+    class project_urls_py
+    class settings_py
+}
+
+' --- 関係
+
+' モデル間の関連
+Material "1" -- "many" Lesson : contains >
+Lesson "1" -- "many" Progress : tracks >
+
+' View と Model
+MaterialListView --> Material
+MaterialDetailView --> Material
+LessonDetailView --> Lesson
+
+' View と Template
+MaterialListView --> material_list_html
+MaterialDetailView --> material_detail_html
+LessonDetailView --> lesson_detail_html
+home --> home_html
+login_html --> base_html
+material_list_html --> base_html
+material_detail_html --> base_html
+lesson_detail_html --> base_html
+
+' Routing
+core_urls_py --> MaterialListView
+core_urls_py --> MaterialDetailView
+core_urls_py --> LessonDetailView
+core_urls_py --> home
+
+project_urls_py --> core_urls_py : include()
+
+' Settings
+settings_py --> Material
+settings_py --> Lesson
+settings_py --> Progress
+
+@enduml

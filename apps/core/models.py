@@ -1,3 +1,5 @@
+#apps/core/models.py
+
 from django.db import models
 
 # 教材モデル（例：書籍、講座、チュートリアル）

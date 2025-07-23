@@ -1,3 +1,5 @@
+#apps/core/apps.py
+
 from django.apps import AppConfig
 
 # アプリ「core」の構成設定クラス
