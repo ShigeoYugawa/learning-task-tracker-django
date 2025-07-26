@@ -1,4 +1,4 @@
-#apps/core/models.py
+# apps/lessons/models.py
 
 from django.db import models
 

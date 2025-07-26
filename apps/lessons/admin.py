@@ -1,7 +1,7 @@
-#apps/core/admin.py
+#apps/lessons/admin.py
 
 from django.contrib import admin
-from .models import Material, Lesson, Progress
+from ..lessons.models import Material, Lesson, Progress
 
 admin.site.register(Material)
 admin.site.register(Lesson)

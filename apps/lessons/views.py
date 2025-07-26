@@ -1,8 +1,8 @@
-# apps/core/views.py
+# apps/lessons/views.py
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Material, Lesson
+from ..lessons.models import Material, Lesson
 
 # ----------------------------------------
 # 教材一覧を表示するビュー（関数ベースビュー）

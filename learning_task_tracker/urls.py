@@ -1,4 +1,4 @@
-#urls.py
+# learning_task_tracker/urls.py
 
 """
 URL configuration for learning_task_tracker project.
@@ -13,10 +13,6 @@ from django.urls import path, include
 urlpatterns = [
     # 管理サイト（/admin/）
     path('admin/', admin.site.urls),
-
-    # アプリ「core」のURLルーティングをルートURLにマッピング
-    path('', include('apps.core.urls')),
-
-    # Djangoのデフォルト認証用URL群（login/logout/password_changeなど）
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('apps.accounts.urls')),
+    path('', include('apps.lessons.urls')),  # ルートは lessons が担当
 ]
