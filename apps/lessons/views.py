@@ -12,7 +12,7 @@ from .models import Material, Lesson
 @login_required
 def material_list_view(request):
     materials = Material.objects.all()  # 教材一覧を取得（全件）
-    return render(request, 'core/material_list.html', {
+    return render(request, 'material_list.html', {
         'materials': materials  # テンプレート側で materials 変数として利用可能
     })
 
@@ -25,7 +25,7 @@ def material_list_view(request):
 def material_detail_view(request, pk):
     material = get_object_or_404(Material, pk=pk)  # 教材を1件取得（存在しなければ404）
     lessons = material.lesson_set.all()            # 教材に関連付けられたレッスン一覧を取得
-    return render(request, 'core/material_detail.html', {
+    return render(request, 'material_detail.html', {
         'material': material,  # 教材オブジェクト
         'lessons': lessons     # 教材に紐づくレッスン一覧
     })
@@ -37,7 +37,7 @@ def material_detail_view(request, pk):
 @login_required
 def lesson_detail_view(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)  # レッスンを取得（存在しなければ404）
-    return render(request, 'core/lesson_detail.html', {
+    return render(request, 'lesson_detail.html', {
         'lesson': lesson  # テンプレートにレッスンオブジェクトを渡す
     })
 
@@ -47,4 +47,4 @@ def lesson_detail_view(request, pk):
 # 認証済みユーザー専用のホームページ（ダッシュボードなどに利用可）
 @login_required
 def home(request):
-    return render(request, 'core/home.html')  # 特にコンテキストなしでテンプレートを表示
+    return render(request, 'home.html')  # 特にコンテキストなしでテンプレートを表示
