@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from ..lessons.models import Material, Lesson
+from .models import Material, Lesson
 
 # ----------------------------------------
 # 教材一覧を表示するビュー（関数ベースビュー）
