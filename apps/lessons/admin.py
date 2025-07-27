@@ -3,6 +3,11 @@
 from django.contrib import admin
 from .models import Material, Lesson, Progress
 
+# --- 管理サイト全体のUIテキストをカスタマイズ ---
+admin.site.site_title = "学習管理システム 管理"
+admin.site.site_header = "学習管理システム 管理サイト"
+admin.site.index_title = "ダッシュボード"
+
 # --- Inline設定 ---
 # Material（教材）の編集画面で、関連するLesson（レッスン）を一緒に編集できるようにする
 class LessonInline(admin.TabularInline):  # 横並びのシンプルな形式

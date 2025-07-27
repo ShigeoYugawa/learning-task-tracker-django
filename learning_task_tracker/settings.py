@@ -41,7 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.accounts',
-    'apps.lessons',
+    # 変更前（自動登録）
+    # 'apps.lessons',
+
+    # 変更後（AppConfig 経由で verbose_name を有効化）
+    'apps.lessons.apps.LessonsConfig',
 ]
 
 MIDDLEWARE = [
