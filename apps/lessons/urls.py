@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'lessons'
+app_name = 'lessons' # 名前空間
 
 urlpatterns = [
     path('', views.home, name='home'),  # トップページ
