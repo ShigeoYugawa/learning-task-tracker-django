@@ -3,6 +3,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'lessons'
+
 urlpatterns = [
     path('', views.home, name='home'),  # トップページ
     path('materials/', views.material_list_view, name='material_list'),

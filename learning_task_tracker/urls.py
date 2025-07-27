@@ -14,5 +14,5 @@ urlpatterns = [
     # 管理サイト（/admin/）
     path('admin/', admin.site.urls),
     path('accounts/', include('apps.accounts.urls')),
-    path('', include('apps.lessons.urls')),  # ルートは lessons が担当
+    path('', include('apps.lessons.urls', namespace='lessons')),  # ルートは lessons が担当
 ]
