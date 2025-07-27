@@ -1,8 +1,11 @@
 # apps/lessons/models.py
 
+from django.contrib.auth.models import User
 from django.db import models
 
+#
 # 教材モデル：学習のベースとなる書籍やチュートリアルなどを表現
+# ------------------------------------------------------------------------------
 class Material(models.Model):
     title = models.CharField("タイトル", max_length=100)  # 教材のタイトル
     description = models.TextField("説明", blank=True)     # 教材の説明（省略可能）
@@ -16,7 +19,9 @@ class Material(models.Model):
         verbose_name_plural = '教材一覧'   # 管理画面での複数形表示
 
 
+#
 # レッスンモデル：教材に属する章やステップを表現
+# ------------------------------------------------------------------------------
 class Lesson(models.Model):
     material = models.ForeignKey(
         Material,
@@ -36,8 +41,9 @@ class Lesson(models.Model):
         # 例: 「Python入門 > レッスン: 条件分岐」
         return f"{self.material.title} > レッスン: {self.title}"
 
-
+#
 # 進捗モデル：ユーザーがどのレッスンをどこまで学習したかを記録
+# ------------------------------------------------------------------------------
 class Progress(models.Model):
     STATUS_CHOICES = [
         ("not_started", "未開始"),
@@ -45,6 +51,13 @@ class Progress(models.Model):
         ("done", "完了"),
     ]
 
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,       # ユーザーが削除されたら進捗も削除
+        related_name="progresses",      # user.progresses でアクセス可能
+        verbose_name="ユーザー",
+        null=False
+    )
     lesson = models.ForeignKey(
         Lesson,
         on_delete=models.CASCADE,       # レッスンが削除されたら進捗も削除
