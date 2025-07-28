@@ -1,6 +1,6 @@
 # apps/lessons/models.py
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 
 #
@@ -52,7 +52,7 @@ class Progress(models.Model):
     ]
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,       # ユーザーが削除されたら進捗も削除
         related_name="progresses",      # user.progresses でアクセス可能
         verbose_name="ユーザー",
