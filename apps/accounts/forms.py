@@ -104,9 +104,13 @@ class CustomLoginForm(AuthenticationForm):
         return self.cleaned_data
     
     def __init__(self, request=None, *args, **kwargs):
-        # Django標準AuthenticationFormの初期処理
-        super().__init__(request, *args, **kwargs)
-
-        # clean() での認証結果を保持する内部キャッシュ
+        # 認証結果を保持する内部キャッシュを事前に初期化
+        # 将来親クラスがこの属性を使っても安全にするため、super() の前に記述
         self.user_cache = None
+
+        # 認証時に使用されるリクエスト情報を保存（AuthenticationFormが使用）
+        self.request = request
+
+        # Django標準AuthenticationFormの初期処理
+        super().__init__(*args, **kwargs)
 
