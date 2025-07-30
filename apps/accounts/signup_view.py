@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login  # 認証済みユーザーとしてログインさせる関数
-from .signup_form import CustomUserCreationForm  # カスタムユーザー登録フォームをインポート
+from .forms import CustomUserCreationForm  # カスタムユーザー登録フォームをインポート
 
 # ユーザーの新規登録処理を担当するビュー関数
 def user_signup_view(request):
@@ -22,4 +22,3 @@ def user_signup_view(request):
 
     # フォームをテンプレートに渡してレンダリング
     return render(request, 'accounts/signup.html', {'form': form})
-

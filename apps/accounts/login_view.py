@@ -1,7 +1,7 @@
 # apps/accounts/login_view.py
 
 from django.contrib.auth.views import LoginView
-from .login_form import CustomLoginForm  # カスタムログインフォームをインポート
+from .forms import CustomUserCreationForm  # カスタムログインフォームをインポート
 
 # Djangoの組み込みLoginViewを継承して、カスタマイズ用のログインビューを作成
 class CustomLoginView(LoginView):
