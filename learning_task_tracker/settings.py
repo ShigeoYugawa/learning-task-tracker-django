@@ -132,3 +132,10 @@ LOGIN_REDIRECT_URL = '/materials/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+# email / username / both のいずれかを選択
+AUTH_METHOD = 'email'  # デフォルトはメールアドレス認証
+
+AUTHENTICATION_BACKENDS = [
+    'apps.accounts.backends.FlexibleAuthBackend',
+]

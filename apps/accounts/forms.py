@@ -6,8 +6,9 @@ PoCであるため頻繁な設計変更を考慮して、統合したモジュ�
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate
 from .models import CustomUser
+from django.contrib.auth import authenticate, get_user_model
+from django.conf import settings
 
 #
 # ユーザー登録フォーム（メールアドレス必須）
@@ -62,55 +63,99 @@ class CustomUserCreationForm(UserCreationForm):
 # ログインフォーム（メールアドレスベースで認証）
 # -------------------------------------------------------------------
 class CustomLoginForm(AuthenticationForm):
-    '''
-    username フィールドをメールアドレスとして扱う（Djangoの認証システム互換のためフィールド名は username のまま）
-    '''
-    username = forms.EmailField(
-        label="メールアドレス",
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'メールアドレス'
-        })
-    )
+    """
+    AUTH_METHOD（email / username / both）に応じて
+    ログイン画面の username フィールドのラベルやプレースホルダを切り替える。
+    Djangoの認証システム互換のため、フォーム内部のフィールド名は必ず 'username' のまま使用する。
+    """
 
-    password = forms.CharField(
-        label="パスワード",
-        widget=forms.PasswordInput(attrs={
+    def __init__(self, request=None, *args, **kwargs):
+        # 認証時に使用するリクエストオブジェクトを保持
+        self.request = request
+        # 認証結果を格納する内部キャッシュを初期化
+        self.user_cache = None
+
+        # 親クラスの初期化（フィールド定義などをセットアップ）
+        super().__init__(*args, **kwargs)
+
+        # settings.py の AUTH_METHOD の値を取得（未設定なら 'email' をデフォルトとする）
+        auth_method = getattr(settings, 'AUTH_METHOD', 'email')
+
+        # AUTH_METHODに応じてusernameフィールドのラベルとプレースホルダを動的に変更
+        if auth_method == 'email':
+            # メールアドレス認証の場合
+            label = 'メールアドレス'
+            placeholder = 'メールアドレス'
+            self.fields['username'] = forms.EmailField(
+                label=label,
+                widget=forms.EmailInput(attrs={
+                    'class': 'form-control',
+                    'placeholder': placeholder,
+                })
+            )
+        elif auth_method == 'username':
+            # ユーザー名認証の場合
+            label = 'ユーザー名'
+            placeholder = 'ユーザー名'
+            self.fields['username'] = forms.CharField(
+                label=label,
+                widget=forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'placeholder': placeholder,
+                })
+            )
+        elif auth_method == 'both':
+            # メールアドレスまたはユーザー名の両方を認証可能にする場合
+            label = 'メールアドレス または ユーザー名'
+            placeholder = 'メールアドレス または ユーザー名'
+            self.fields['username'] = forms.CharField(
+                label=label,
+                widget=forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'placeholder': placeholder,
+                })
+            )
+
+        # password フィールドのUI設定（クラスとプレースホルダ）を更新
+        self.fields['password'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'パスワード'
         })
-    )
 
     def confirm_login_allowed(self, user):
-        # 必要に応じてユーザー状態のチェックなどをここに記述可能（例: is_active）
+        """
+        ログイン許可の判定を行うメソッド。
+        ここではユーザーがアクティブ状態かどうかをチェックし、
+        非アクティブならログインを拒否する。
+        """
         if not user.is_active:
             raise forms.ValidationError("このアカウントは無効です。", code='inactive')
 
     def clean(self):
-        email = self.cleaned_data.get('username')
+        """
+        フォームのバリデーション処理をオーバーライド。
+        入力された username と password を基に認証処理を実施する。
+
+        認証は backends.py の FlexibleAuthBackend.authenticate() に委任し、
+        認証成功すれば user_cache にユーザーオブジェクトを保持する。
+
+        失敗した場合は汎用エラーメッセージを返す。
+        """
+        username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        if email and password:
-            try:
-                user = CustomUser.objects.get(email=email)
-            except CustomUser.DoesNotExist:
-                raise forms.ValidationError("メールアドレスまたはパスワードが正しくありません。")
 
-            self.user_cache = authenticate(self.request, username=user.username, password=password)
+        if username and password:
+            # settings.AUTH_METHODに応じた認証ロジックを持つ
+            # FlexibleAuthBackend による authenticate を呼び出す
+            self.user_cache = authenticate(
+                self.request, username=username, password=password
+            )
             if self.user_cache is None:
-                raise forms.ValidationError("メールアドレスまたはパスワードが正しくありません。")
+                # 認証失敗時のエラー
+                raise forms.ValidationError("ログインID または パスワードが正しくありません。")
 
+            # ログイン許可判定（例：is_active）
             self.confirm_login_allowed(self.user_cache)
 
+        # 最終的にバリデーション済みの cleaned_data を返す
         return self.cleaned_data
-    
-    def __init__(self, request=None, *args, **kwargs):
-        # 認証結果を保持する内部キャッシュを事前に初期化
-        # 将来親クラスがこの属性を使っても安全にするため、super() の前に記述
-        self.user_cache = None
-
-        # 認証時に使用されるリクエスト情報を保存（AuthenticationFormが使用）
-        self.request = request
-
-        # Django標準AuthenticationFormの初期処理
-        super().__init__(*args, **kwargs)
-
