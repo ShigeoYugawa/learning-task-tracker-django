@@ -128,15 +128,26 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# DjangoのログインURL（認証が必要なページに未ログインでアクセスした場合のリダイレクト先）
 LOGIN_URL = '/accounts/login/'
+
+# ログイン成功後のリダイレクト先URL（例：教材一覧ページ）
 LOGIN_REDIRECT_URL = '/materials/'
+
+# ログアウト後のリダイレクト先URL（再度ログインページへ戻す）
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
+# Djangoで使用するカスタムユーザーモデルを指定（apps.accounts アプリの CustomUser モデル）
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-# email / username / both のいずれかを選択
-AUTH_METHOD = 'email'  # デフォルトはメールアドレス認証
+# 認証方法の選択肢：
+# 'email'：メールアドレス認証
+# 'username'：ユーザー名認証
+# 'both'：メールアドレスまたはユーザー名のいずれかで認証可能
+AUTH_METHOD = 'email'  # デフォルトでメールアドレス認証を使用
 
+# 認証バックエンドの指定
+# FlexibleAuthBackend はメール/ユーザー名認証を柔軟に切り替えられるカスタム認証クラス
 AUTHENTICATION_BACKENDS = [
     'apps.accounts.backends.FlexibleAuthBackend',
 ]
