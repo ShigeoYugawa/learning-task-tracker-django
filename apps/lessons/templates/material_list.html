@@ -9,7 +9,9 @@
   <ul class="list-group">
     {% for material in materials %}
       <li class="list-group-item">
-        <a href="{% url 'material_detail' material.pk %}">{{ material.title }}</a>
+      {% if material and material.pk %}
+        <a href="{% url 'lessons:lesson_create' material.pk %}">レッスン追加</a>
+      {% endif %}
       </li>
     {% empty %}
       <li class="list-group-item">教材が登録されていません。</li>

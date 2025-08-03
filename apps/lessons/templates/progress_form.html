@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}進捗登録{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">{{ lesson.title }} の進捗を記録</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="id_status" class="form-label">学習状況</label>
+      {{ form.status|add_class:"form-select" }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{% url 'lessons:lesson_detail' lesson.pk %}" class="btn btn-secondary ms-2">戻る</a>
+  </form>
+{% endblock %}

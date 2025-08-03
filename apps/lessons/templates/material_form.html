@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}教材登録{% endblock %}
+
+{% block content %}
+  <h2 class="mb-4">教材の登録</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="id_title" class="form-label">タイトル</label>
+      {{ form.title|add_class:"form-control" }}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_description" class="form-label">説明</label>
+      {{ form.description|add_class:"form-control" }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{% url 'lessons:material_list' %}" class="btn btn-secondary ms-2">戻る</a>
+  </form>
+{% endblock %}
