@@ -18,6 +18,8 @@ urlpatterns = [
     # 教材作成ページ。新規教材登録用フォーム表示・送信
     path('materials/create/', views.material_create, name='material_create'),
 
+    path('materials/<int:material_pk>/lessons/', views.lesson_list_view, name='lesson_list'),
+
     # レッスン作成ページ（教材指定なし）。新規レッスン登録用フォーム
     path('lessons/create/', views.lesson_create_view, name='lesson_create'),
 

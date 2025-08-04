@@ -10,7 +10,7 @@
     {% for material in materials %}
       <li class="list-group-item">
       {% if material and material.pk %}
-        <a href="{% url 'lessons:lesson_create' material.pk %}">レッスン追加</a>
+        <a href="{% url 'lessons:lesson_create_with_material' material.pk %}">{{ material }}</a>
       {% endif %}
       </li>
     {% empty %}

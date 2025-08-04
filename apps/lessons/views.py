@@ -13,7 +13,7 @@ from .forms import MaterialForm, LessonForm, ProgressForm  # フォームもイ�
 @login_required
 def material_list_view(request):
     materials = Material.objects.all()  # 教材テーブルの全レコードを取得
-    return render(request, 'material_list.html', {
+    return render(request, 'lessons/material_list.html', {
         'materials': materials  # テンプレートで 'materials' 変数として利用可能
     })
 
@@ -34,7 +34,7 @@ def material_create(request):
         # GETリクエスト（初回アクセス時など）は空フォームを作成
         form = MaterialForm()
     # フォームをテンプレートに渡して表示
-    return render(request, 'material_form.html', {'form': form})
+    return render(request, 'lessons/material_form.html', {'form': form})
 
 # ----------------------------------------
 # 指定教材の詳細表示ビュー
@@ -45,10 +45,22 @@ def material_create(request):
 def material_detail_view(request, pk):
     material = get_object_or_404(Material, pk=pk)  # 教材を1件取得 or 404
     lessons = material.lessons.all()  # 外部キーのrelated_name 'lessons' を使い関連レッスン一覧取得
-    return render(request, 'material_detail.html', {
+    return render(request, 'lessons/material_detail.html', {
         'material': material,  # 教材オブジェクト
         'lessons': lessons     # 教材に紐づくレッスン一覧
     })
+
+
+@login_required
+def lesson_list_view(request, material_pk):
+    material = get_object_or_404(Material, pk=material_pk)
+    lessons = material.lessons.all()  # related_name='lessons' を使って取得
+    return render(request, 'lessons/lesson_list.html', {
+        'material': material,
+        'lessons': lessons
+    })
+
+
 
 # ----------------------------------------
 # 指定レッスンの詳細表示ビュー
@@ -57,7 +69,7 @@ def material_detail_view(request, pk):
 @login_required
 def lesson_detail_view(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)  # レッスン1件取得 or 404
-    return render(request, 'lesson_detail.html', {
+    return render(request, 'lessons/lesson_detail.html', {
         'lesson': lesson  # レッスンオブジェクトを渡す
     })
 
@@ -83,7 +95,7 @@ def lesson_create_view(request, material_pk=None):
     else:
         form = LessonForm(initial=initial_data)  # GETの場合は初期値設定
 
-    return render(request, 'lesson_form.html', {
+    return render(request, 'lessons/lesson_form.html', {
         'form': form,
         'material': material,  # テンプレートで見出しや説明用に利用（任意）
     })
@@ -107,7 +119,7 @@ def progress_create_view(request, lesson_pk):
     else:
         form = ProgressForm()  # GETは空フォーム
 
-    return render(request, 'progress_form.html', {
+    return render(request, 'lessons/progress_form.html', {
         'form': form,
         'lesson': lesson,  # レッスン情報もテンプレートへ渡す
     })
