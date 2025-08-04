@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if material and material.pk %}
+    <h2>{{ material.title }} に関連するレッスン一覧</h2>
+
+    <a href="{% url 'lessons:lesson_create_with_material' material.pk %}">＋ 新規レッスン作成</a>
+
+    <ul>
+      {% if lessons %}
+        {% for lesson in lessons %}
+          <li>
+            {{ lesson.title }}
+            {% if lesson.pk %}
+              - <a href="{% url 'lessons:lesson_detail' lesson.pk %}">詳細</a>
+              - <a href="{% url 'lessons:progress_create' lesson.pk %}">進捗を追加</a>
+            {% else %}
+              - <em>リンク情報なし</em>
+            {% endif %}
+          </li>
+        {% endfor %}
+      {% else %}
+        <li>まだレッスンは登録されていません。</li>
+      {% endif %}
+    </ul>
+
+  {% else %}
+    <p>教材情報が見つかりませんでした。</p>
+  {% endif %}
+
+  <a href="{% url 'lessons:material_list' %}">← 教材一覧へ戻る</a>
+{% endblock %}
