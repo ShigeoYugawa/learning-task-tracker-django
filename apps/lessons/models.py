@@ -20,7 +20,30 @@ class Material(models.Model):
 
 
 #
-# レッスンモデル：教材に属する章やステップを表現
+# 教材ノードモデル：教材内の章・節・項など階層構造を持つ要素を表現
+# ------------------------------------------------------------------------------
+class MaterialNode(models.Model):
+    material = models.ForeignKey(Material, related_name='material_nodes', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    title = models.CharField("タイトル", max_length=200)         # ノードのタイトル（例：第1章）
+    description = models.TextField("説明", blank=True, null=True) # ノードの補足説明
+    order = models.PositiveBigIntegerField("表示順", default=0)  # 表示順（昇順で並ぶ）
+
+    class Meta:
+        ordering = ['order']  # ノードは order に従って昇順に並ぶ
+        constraints = [
+            models.UniqueConstraint(fields=['parent', 'order'], name='unique_order_per_parent')
+        ]
+        verbose_name = '教材学習項目'              # 管理画面での単数形表示
+        verbose_name_plural = '教材学習項目一覧'   # 管理画面での複数形表示
+
+    def __str__(self):
+        # 管理画面などで表示される文字列表現
+        return f"学習項目:{self.title}"
+
+
+#
+# ※レッスンモデル：教材に属する章やステップを表現（最終的には削除すること）
 # ------------------------------------------------------------------------------
 class Lesson(models.Model):
     material = models.ForeignKey(
@@ -40,6 +63,7 @@ class Lesson(models.Model):
     def __str__(self):
         # 例: 「Python入門 > レッスン: 条件分岐」
         return f"{self.material.title} > レッスン: {self.title}"
+
 
 #
 # 進捗モデル：ユーザーがどのレッスンをどこまで学習したかを記録
