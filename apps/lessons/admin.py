@@ -1,6 +1,7 @@
 # apps/lessons/admin.py
 
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from .models import Material, Lesson, Progress, MaterialNode
 
 # --- 管理サイト全体のUIテキストをカスタマイズ ---
@@ -55,6 +56,13 @@ class MaterialNodeAdmin(admin.ModelAdmin):
                 # 新規作成時は空のクエリセットにするなど工夫可
                 kwargs["queryset"] = MaterialNode.objects.none()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    
+    def save_model(self, request, obj, form, change):
+        try:
+            obj.clean()
+            super().save_model(request, obj, form, change)
+        except ValidationError as e:
+            self.message_user(request, f"保存できません: {e.message}", level='error')
 
 
 # ※Lesson管理画面カスタマイズ （最終的には削除すること）

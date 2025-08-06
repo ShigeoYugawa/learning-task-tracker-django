@@ -2,6 +2,8 @@
 
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ValidationError
+
 
 #
 # 教材モデル：学習のベースとなる書籍やチュートリアルなどを表現
@@ -28,6 +30,18 @@ class MaterialNode(models.Model):
     title = models.CharField("タイトル", max_length=200)         # ノードのタイトル（例：第1章）
     description = models.TextField("説明", blank=True, null=True) # ノードの補足説明
     order = models.PositiveBigIntegerField("表示順", default=0)  # 表示順（昇順で並ぶ）
+
+    def clean(self):
+        # 親ノードに自分自身を指定していないかをチェック
+        if self.parent and self.pk == self.parent.pk:
+            raise ValidationError("親ノードに自分自身を指定することはできません。")
+
+        # 再帰的に親をたどって、自分がどこかで親になっていないかをチェック（循環参照防止）
+        parent = self.parent
+        while parent:
+            if parent.pk == self.pk:
+                raise ValidationError("循環参照が検出されました。")
+            parent = parent.parent
 
     class Meta:
         ordering = ['order']  # ノードは order に従って昇順に並ぶ
