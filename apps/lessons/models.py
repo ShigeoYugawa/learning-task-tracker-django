@@ -9,38 +9,56 @@ from django.core.exceptions import ValidationError
 # 教材モデル：学習のベースとなる書籍やチュートリアルなどを表現
 # ------------------------------------------------------------------------------
 class Material(models.Model):
-    title = models.CharField("タイトル", max_length=100)  # 教材のタイトル
-    description = models.TextField("説明", blank=True)     # 教材の説明（省略可能）
+    title = models.CharField(verbose_name="タイトル", max_length=100)  # 教材のタイトル
+    description = models.TextField(verbose_name="説明", blank=True)     # 教材の説明（省略可能）
 
     def __str__(self):
         # 管理画面などでの表示名
         return f"教材: {self.title}"
 
     class Meta:
-        verbose_name = '教材'              # 管理画面での単数形表示
-        verbose_name_plural = '教材一覧'   # 管理画面での複数形表示
+        verbose_name = "教材"              # 管理画面での単数形表示
+        verbose_name_plural = "教材一覧"   # 管理画面での複数形表示
 
 
 #
 # 教材ノードモデル：教材内の章・節・項など階層構造を持つ要素を表現
 # ------------------------------------------------------------------------------
 class MaterialNode(models.Model):
-    material = models.ForeignKey(Material, related_name='material_nodes', on_delete=models.CASCADE)
-    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
-    title = models.CharField("タイトル", max_length=200)         # ノードのタイトル（例：第1章）
-    description = models.TextField("説明", blank=True, null=True) # ノードの補足説明
-    order = models.PositiveBigIntegerField("表示順", default=0)  # 表示順（昇順で並ぶ）
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='material_nodes')
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
+    title = models.CharField(verbose_name="タイトル", max_length=200)         # ノードのタイトル（例：第1章）
+    description = models.TextField(verbose_name="説明", blank=True, null=True) # ノードの補足説明
+    order = models.PositiveBigIntegerField(verbose_name="表示順", default=0)  # 表示順（昇順で並ぶ）
+
+    def get_descendant_ids(self):
+        """
+        自ノードのすべての子孫ノードのIDを返す（再帰的）。
+        """
+        descendants = set()
+        for child in self.children.all():
+            descendants.add(child.pk)
+            descendants.update(child.get_descendant_ids())
+        return descendants
 
     def clean(self):
-        # 親ノードに自分自身を指定していないかをチェック
-        if self.parent and self.pk == self.parent.pk:
+        # 自分自身を親に指定していないか（新規作成時は pk=None なので注意）
+        if self.parent and self.pk and self.parent.pk == self.pk:
             raise ValidationError("親ノードに自分自身を指定することはできません。")
 
-        # 再帰的に親をたどって、自分がどこかで親になっていないかをチェック（循環参照防止）
+        # 同じ教材内かどうかをチェック（任意）
+        if self.parent and self.material != self.parent.material:
+            raise ValidationError("親ノードは同じ教材内のノードを選択してください。")
+
+        # 循環参照のチェック
         parent = self.parent
+        visited = set()
         while parent:
-            if parent.pk == self.pk:
+            if self.pk and parent.pk == self.pk:
                 raise ValidationError("循環参照が検出されました。")
+            if parent.pk in visited:
+                break  # 無限ループ防止
+            visited.add(parent.pk)
             parent = parent.parent
 
     class Meta:
@@ -48,35 +66,12 @@ class MaterialNode(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['parent', 'order'], name='unique_order_per_parent')
         ]
-        verbose_name = '教材学習項目'              # 管理画面での単数形表示
-        verbose_name_plural = '教材学習項目一覧'   # 管理画面での複数形表示
+        verbose_name = "教材学習項目"              # 管理画面での単数形表示
+        verbose_name_plural = "教材学習項目一覧"   # 管理画面での複数形表示
 
     def __str__(self):
         # 管理画面などで表示される文字列表現
         return f"学習項目:{self.title}"
-
-
-#
-# ※レッスンモデル：教材に属する章やステップを表現（最終的には削除すること）
-# ------------------------------------------------------------------------------
-class Lesson(models.Model):
-    material = models.ForeignKey(
-        Material,
-        on_delete=models.CASCADE,      # 教材が削除されたら関連レッスンも削除
-        related_name="lessons",        # material.lessons で関連レッスンにアクセス可能
-        verbose_name="教材"
-    )
-    title = models.CharField("レッスンタイトル", max_length=100)  # レッスンのタイトル
-    order = models.IntegerField("表示順序")                     # 教材内での並び順を指定
-
-    class Meta:
-        ordering = ['order']                  # 表示順は order 昇順に固定
-        verbose_name = "レッスン"            # 管理画面での単数形表示
-        verbose_name_plural = "レッスン一覧" # 管理画面での複数形表示
-
-    def __str__(self):
-        # 例: 「Python入門 > レッスン: 条件分岐」
-        return f"{self.material.title} > レッスン: {self.title}"
 
 
 #
@@ -96,14 +91,14 @@ class Progress(models.Model):
         verbose_name="ユーザー",
         null=False
     )
-    lesson = models.ForeignKey(
-        Lesson,
-        on_delete=models.CASCADE,       # レッスンが削除されたら進捗も削除
-        related_name="progresses",      # lesson.progresses でアクセス可能
-        verbose_name="レッスン"
+    material_node = models.ForeignKey(
+        MaterialNode,
+        on_delete=models.CASCADE,
+        related_name="progresses",
+        verbose_name="教材学習項目"
     )
-    date = models.DateField("記録日", auto_now_add=True)  # 進捗の記録日（自動設定）
-    status = models.CharField("学習ステータス", max_length=20, choices=STATUS_CHOICES)  # 学習状況を選択肢から指定
+    date = models.DateField(verbose_name="記録日", auto_now_add=True)  # 進捗の記録日（自動設定）
+    status = models.CharField(verbose_name="学習ステータス", max_length=20, choices=STATUS_CHOICES)  # 学習状況を選択肢から指定
 
     class Meta:
         verbose_name = "進捗"             # 管理画面での単数形表示

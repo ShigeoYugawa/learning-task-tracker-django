@@ -8,14 +8,14 @@
   <h1 class="mb-3">{{ material.title }}</h1>
   <p class="mb-4">{{ material.description }}</p>
 
-  <h2 class="mb-3">授業一覧</h2>
+  <h2 class="mb-3">構成</h2>
   <ul class="list-group">
-    {% for lesson in material.lesson_set.all %}
+    {% for node in material.nodes.all %}
       <li class="list-group-item">
-        <a href="{% url 'lesson_detail' lesson.pk %}">{{ lesson.title }}</a>
+        {{ node.title }}
       </li>
     {% empty %}
-      <li class="list-group-item">授業がありません。</li>
+      <li class="list-group-item">構成が登録されていません。</li>
     {% endfor %}
   </ul>
 {% endblock %}

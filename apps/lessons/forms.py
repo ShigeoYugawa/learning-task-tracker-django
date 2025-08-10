@@ -1,7 +1,7 @@
 # apps/lessons/forms.py
 
 from django import forms
-from .models import Material, Lesson, Progress  # 各モデルをインポート
+from .models import Material, Progress  # 各モデルをインポート
 
 # ----------------------------------------
 # 教材（Material）用フォーム
@@ -10,15 +10,6 @@ class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material  # 対象モデル
         fields = ['title', 'description']  # フォームに表示・入力するフィールド
-
-
-# ----------------------------------------
-# レッスン（Lesson）用フォーム
-# Lessonモデルのmaterial(外部キー)、title、orderフィールドをフォームに使用
-class LessonForm(forms.ModelForm):
-    class Meta:
-        model = Lesson
-        fields = ['material', 'title', 'order'] 
 
 
 # ----------------------------------------
