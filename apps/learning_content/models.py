@@ -91,12 +91,12 @@ class Progress(models.Model):
         verbose_name="ユーザー",
         null=False
     )
-    material_node = models.ForeignKey(
-        MaterialNode,
-        on_delete=models.CASCADE,
-        related_name="progresses",
-        verbose_name="教材学習項目"
-    )
+    #material_node = models.ForeignKey(
+    #    MaterialNode,
+    #    on_delete=models.CASCADE,
+    #    related_name="progresses",
+    #    verbose_name="教材学習項目"
+    #)
     date = models.DateField(verbose_name="記録日", auto_now_add=True)  # 進捗の記録日（自動設定）
     status = models.CharField(verbose_name="学習ステータス", max_length=20, choices=STATUS_CHOICES)  # 学習状況を選択肢から指定
 
