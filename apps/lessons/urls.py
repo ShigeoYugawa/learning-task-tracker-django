@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 
-app_name = 'lessons'  # URL名前空間を設定。テンプレートで {% url 'lessons:home' %} のように使うための識別子
+app_name = 'materials'
 
 urlpatterns = [
     # ルートURL（空文字）で home ビューを呼び出し。トップページとして利用
