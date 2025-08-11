@@ -1,4 +1,4 @@
-# apps/lessons/admin.py
+# apps/learning_content/admin.py
 
 import logging
 
@@ -99,7 +99,7 @@ class MaterialNodeAdmin(admin.ModelAdmin):
             material_id = request.GET.get('material')
             if material_id:
                 # オートコンプリートURLにmaterial_idをクエリパラメータとして追加
-                url = reverse('admin:lessons_materialnode_autocomplete')
+                url = reverse('admin:learning_content_materialnode_autocomplete')
                 params = urlencode({'material_id': material_id})
                 kwargs['widget'].attrs['data-autocomplete-url'] = f"{url}?{params}"
         return super().formfield_for_foreignkey(db_field, request, **kwargs)

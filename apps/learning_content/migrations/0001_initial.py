@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=100, verbose_name='レッスンタイトル')),
                 ('order', models.IntegerField(verbose_name='表示順序')),
-                ('material', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lessons', to='lessons.material', verbose_name='教材')),
+                ('material', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='learning_content', to='learning_content.material', verbose_name='教材')),
             ],
             options={
                 'verbose_name': 'レッスン',
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(auto_now_add=True, verbose_name='記録日')),
                 ('status', models.CharField(choices=[('not_started', '未開始'), ('in_progress', '学習中'), ('done', '完了')], max_length=20, verbose_name='学習ステータス')),
-                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progresses', to='lessons.lesson', verbose_name='レッスン')),
+                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progresses', to='learning_content.lesson', verbose_name='レッスン')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='progresses', to=settings.AUTH_USER_MODEL, verbose_name='ユーザー')),
             ],
             options={

@@ -1,4 +1,4 @@
-<!-- lessons/templates/material_list.html -->
+<!-- learning_content/templates/material_list.html -->
 
 {% extends 'base.html' %}
 
@@ -10,7 +10,7 @@
     {% for material in materials %}
       <li class="list-group-item">
       {% if material and material.pk %}
-        <a href="{% url 'lessons:lesson_create' material.pk %}">レッスン追加</a>
+        <a href="{% url 'learning_content:lesson_create' material.pk %}">レッスン追加</a>
       {% endif %}
       </li>
     {% empty %}

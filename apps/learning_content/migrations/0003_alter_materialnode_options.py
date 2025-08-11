@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0002_materialnode'),
+        ('learning_content', '0002_materialnode'),
     ]
 
     operations = [

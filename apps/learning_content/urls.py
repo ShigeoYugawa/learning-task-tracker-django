@@ -1,4 +1,4 @@
-# apps/lessons/urls.py
+# apps/learning_content/urls.py
 
 from django.urls import path
 from . import views

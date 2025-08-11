@@ -1,4 +1,4 @@
-# apps/lessons/models.py
+# apps/learning_content/models.py
 
 from django.conf import settings
 from django.db import models

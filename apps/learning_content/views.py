@@ -1,4 +1,4 @@
-# apps/lessons/views.py
+# apps/learning_content/views.py
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -29,7 +29,7 @@ def material_create(request):
             material = form.save(commit=False)  # DB保存直前のオブジェクトを作成
             material.user = request.user  # ログインユーザーを紐付ける（所有者として）
             material.save()  # DBに保存
-            return redirect('lessons:material_list')  # 教材一覧ページへリダイレクト
+            return redirect('learning_content:material_list')  # 教材一覧ページへリダイレクト
     else:
         # GETリクエスト（初回アクセス時など）は空フォームを作成
         form = MaterialForm()
@@ -48,7 +48,7 @@ def material_node_create(request):
             material_node = form.save(commit=False)
             # 必要あれば所有者の紐付けなど
             material_node.save()
-            return redirect('lessons:material_detail', pk=material_node.material.pk)
+            return redirect('learning_content:material_detail', pk=material_node.material.pk)
     else:
         form = MaterialNodeForm()
     return render(request, 'materialnode_form.html', {'form': form})

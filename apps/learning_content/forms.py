@@ -1,4 +1,4 @@
-# apps/lessons/forms.py
+# apps/learning_content/forms.py
 
 from django import forms
 from .models import Material, MaterialNode, Progress  # 各モデルをインポート

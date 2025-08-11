@@ -43,10 +43,10 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'apps.accounts',
     # 変更前（自動登録）
-    # 'apps.lessons',
+    # 'apps.learning_content',
 
     # 変更後（AppConfig 経由で verbose_name を有効化）
-    'apps.lessons.apps.LessonsConfig',
+    'apps.learning_content.apps.LessonsConfig',
 ]
 
 MIDDLEWARE = [
@@ -174,8 +174,8 @@ LOGGING = {
         },
     },
     'loggers': {
-        # あなたの apps.lessons.admin のログをINFOで出力
-        'apps.lessons.admin': {
+        # あなたの apps.learning_content.admin のログをINFOで出力
+        'apps.learning_content.admin': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,

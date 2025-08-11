@@ -1,4 +1,4 @@
-<!-- apps/lessons/templates/material_form.html -->
+<!-- apps/learning_content/templates/material_form.html -->
 
 {% extends 'base.html' %}
 {% load widget_tweaks %}
@@ -22,6 +22,6 @@
     </div>
 
     <button type="submit" class="btn btn-primary">保存</button>
-    <a href="{% url 'lessons:material_list' %}" class="btn btn-secondary ms-2">戻る</a>
+    <a href="{% url 'learning_content:material_list' %}" class="btn btn-secondary ms-2">戻る</a>
   </form>
 {% endblock %}

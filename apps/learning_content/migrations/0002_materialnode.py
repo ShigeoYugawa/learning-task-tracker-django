@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lessons', '0001_initial'),
+        ('learning_content', '0001_initial'),
     ]
 
     operations = [
@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=200, verbose_name='タイトル')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='説明')),
                 ('order', models.PositiveBigIntegerField(default=0, verbose_name='表示順')),
-                ('material', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='material_nodes', to='lessons.material')),
-                ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='lessons.materialnode')),
+                ('material', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='material_nodes', to='learning_content.material')),
+                ('parent', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='learning_content.materialnode')),
             ],
             options={
                 'ordering': ['order'],
