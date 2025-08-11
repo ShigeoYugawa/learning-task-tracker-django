@@ -18,4 +18,5 @@ urlpatterns = [
     # 教材作成ページ。新規教材登録用フォーム表示・送信
     path('materials/create/', views.material_create, name='material_create'),
 
+    path('materialnodes/create/', views.material_node_create, name='material_node_create'),
 ]

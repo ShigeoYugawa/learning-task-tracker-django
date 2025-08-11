@@ -2,8 +2,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Material, Lesson  # モデルから教材（Material）とレッスン（Lesson）をインポート
-from .forms import MaterialForm, ProgressForm  # フォームもインポート
+from .models import Material  # モデルから教材（Material）とレッスン（Lesson）をインポート
+from .forms import MaterialForm, MaterialNodeForm , ProgressForm  # フォームもインポート
 
 # ----------------------------------------
 # 教材一覧を表示するビュー（関数ベースビュー）
@@ -35,6 +35,25 @@ def material_create(request):
         form = MaterialForm()
     # フォームをテンプレートに渡して表示
     return render(request, 'material_form.html', {'form': form})
+
+
+# ----------------------------------------
+# 指定教材の学習項目追加ビュー
+# ----------------------------------------
+@login_required
+def material_node_create(request):
+    if request.method == 'POST':
+        form = MaterialNodeForm(request.POST)
+        if form.is_valid():
+            material_node = form.save(commit=False)
+            # 必要あれば所有者の紐付けなど
+            material_node.save()
+            return redirect('lessons:material_detail', pk=material_node.material.pk)
+    else:
+        form = MaterialNodeForm()
+    return render(request, 'materialnode_form.html', {'form': form})
+
+
 
 # ----------------------------------------
 # 指定教材の詳細表示ビュー

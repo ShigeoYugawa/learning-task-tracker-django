@@ -105,5 +105,5 @@ class Progress(models.Model):
         verbose_name_plural = "進捗一覧"  # 管理画面での複数形表示
 
     def __str__(self):
-        # 例: 「Python入門 > レッスン: 条件分岐 の進捗 - 学習中（2025-07-27）」
-        return f"{self.lesson} の進捗 - {self.get_status_display()}（{self.date}）"
+        return f"{self.material_node} の進捗 - {self.get_status_display()}（{self.date}）"
+
