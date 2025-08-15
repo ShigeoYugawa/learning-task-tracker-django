@@ -1,0 +1,71 @@
+{# apps/learning_content/templates/learning_content/_node_list_tree.html #}
+{% load widget_tweaks %}
+
+{# level 初期化（オプション、CSS indent 用） #}
+{% if level is not defined %}
+  {% with 0 as level %}
+{% endif %}
+
+{# 親アコーディオンID 初期化（root の場合） #}
+{% if parent_id is not defined %}
+  {% with "accordionRoot" as parent_id %}
+{% endif %}
+
+<div class="accordion" id="accordion{{ parent_id }}">
+{% for node in nodes %}
+    {# heading / collapse ID を一意化 #}
+    {% with "heading"|add:node.pk|stringformat:"s" as heading_id %}
+    {% with "collapse"|add:node.pk|stringformat:"s" as collapse_id %}
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="{{ heading_id }}">
+            <button class="accordion-button collapsed" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#{{ collapse_id }}"
+                    aria-expanded="false"
+                    aria-controls="{{ collapse_id }}">
+                {{ node.title }}
+            </button>
+        </h2>
+
+        <div id="{{ collapse_id }}" class="accordion-collapse collapse"
+             aria-labelledby="{{ heading_id }}"
+             data-bs-parent="#accordion{{ parent_id }}">
+            <div class="accordion-body">
+
+                <a href="{% url 'learning_content:progress_create' node.pk %}" class="btn btn-sm btn-outline-success me-2">
+                    進捗を記録
+                </a>
+
+                {% if not material.is_template and node.owner == user %}
+                    <a href="{% url 'learning_content:material_node_edit_for_copy' node.pk %}" class="btn btn-sm btn-outline-secondary">
+                        編集
+                    </a>
+                {% endif %}
+
+                {# 子ノードがある場合、再帰呼び出し #}
+                {% if node.children.exists %}
+                    {% include "learning_content/_node_list_tree.html"
+                        with nodes=node.children.all
+                             user=user
+                             material=material
+                             parent_id=node.pk
+                             level=level|add:"1" %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% endwith %}
+    {% endwith %}
+{% empty %}
+    <p class="text-muted">学習項目はまだ登録されていません。</p>
+{% endfor %}
+</div>
+
+{% if level is not defined %}
+  {% endwith %}
+{% endif %}
+{% if parent_id is not defined %}
+  {% endwith %}
+{% endif %}

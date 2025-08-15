@@ -14,7 +14,7 @@ def user_signup_view(request):
         if form.is_valid():
             user = form.save()          # データベースにユーザーを保存
             login(request, user)        # 登録直後に自動でログイン処理
-            return redirect('lessons:material_list')  # タスク一覧画面など、次の画面にリダイレクト
+            return redirect('learning_content:material_list')  # タスク一覧画面など、次の画面にリダイレクト
 
     else:
         # 初回アクセスやGETリクエスト時は空のフォームを表示

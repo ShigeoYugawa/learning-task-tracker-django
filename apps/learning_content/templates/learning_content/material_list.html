@@ -1,20 +1,33 @@
-<!-- learning_content/templates/material_list.html -->
+<!-- learning_content/templates/learning_content/material_list.html -->
 
 {% extends 'base.html' %}
 
-{% block title %}教材一覧{% endblock %}
-
 {% block content %}
-  <h1 class="mb-4">教材一覧</h1>
-  <ul class="list-group">
-    {% for material in materials %}
-      <li class="list-group-item">
-      {% if material and material.pk %}
-        <a href="{% url 'learning_content:lesson_create' material.pk %}">レッスン追加</a>
-      {% endif %}
-      </li>
-    {% empty %}
-      <li class="list-group-item">教材が登録されていません。</li>
-    {% endfor %}
-  </ul>
+<h2 class="mb-4">教材一覧</h2>
+
+<a href="{% url 'learning_content:material_create' %}" class="btn btn-primary mb-3">教材を追加</a>
+
+<ul class="list-group">
+{% for material in materials %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <a href="{% url 'learning_content:material_detail' material.pk %}">
+                {{ material.title }}
+            </a>
+            {% if material.is_template %}
+                <span class="badge bg-secondary ms-2">テンプレート</span>
+            {% endif %}
+        </div>
+        <div>
+            {% if material.is_template %}
+                <a href="{% url 'learning_content:material_duplicate' material.pk %}" class="btn btn-sm btn-outline-secondary">
+                    複製
+                </a>
+            {% endif %}
+        </div>
+    </li>
+{% empty %}
+    <li class="list-group-item">教材はまだ登録されていません。</li>
+{% endfor %}
+</ul>
 {% endblock %}

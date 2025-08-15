@@ -11,7 +11,7 @@ from django.contrib.admin.views.autocomplete import AutocompleteJsonView
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-from .models import Material, Progress#, MaterialNode
+from .models import Material, Progress, MaterialNode
 
 # --- 管理サイト全体のUIテキストをカスタマイズ ---
 admin.site.site_title = "学習管理システム 管理"
@@ -21,13 +21,12 @@ admin.site.index_title = "ダッシュボード"
 
 # MaterialNodeのInline設定
 # --------------------------------------------------------------------------
-'''
 class MaterialNodeInline(admin.TabularInline):
     model = MaterialNode
     extra = 1
     fields = ('title', 'description', 'parent', 'order')
     show_change_link = True  # 編集ページへのリンクを表示
-'''
+
 
 # Material管理画面カスタマイズ
 # --------------------------------------------------------------------------
@@ -35,12 +34,11 @@ class MaterialNodeInline(admin.TabularInline):
 class MaterialAdmin(admin.ModelAdmin):
     list_display = ('title', 'description')  # 一覧で表示される列
     search_fields = ('title', 'description')  # タイトルや説明で検索可能に
-    #inlines = [MaterialNodeInline]  # インラインでMaterialNodeを表示・編集
+    inlines = [MaterialNodeInline]  # インラインでMaterialNodeを表示・編集
 
 
 # MaterialNode管理画面カスタマイズ
 # --------------------------------------------------------------------------
-'''
 @admin.register(MaterialNode)
 class MaterialNodeAdmin(admin.ModelAdmin):
     list_display = ('title', 'material', 'parent', 'order')
@@ -54,8 +52,7 @@ class MaterialNodeAdmin(admin.ModelAdmin):
         
         #オートコンプリートで表示される親ノード候補を動的に制限する。
         #自ノードやその子孫を除外し、同じMaterial内のノードのみに絞る。
-        #一覧画面などオートコンプリート以外の呼び出しでは絞り込みをしない。
-        
+        #一覧画面などオートコンプリート以外の呼び出しでは絞り込みをしない。       
 
         # autocomplete用のURLかどうか判定（URLパスに'autocomplete'が含まれるかで判別）
         if 'autocomplete' not in request.path:
@@ -96,23 +93,31 @@ class MaterialNodeAdmin(admin.ModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "parent":
-            kwargs['widget'].attrs['placeholder'] = '先に教材を選んでください'
+            # まずフォームフィールドを作る
+            formfield = super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+            # プレースホルダー設定
+            formfield.widget.attrs['placeholder'] = '先に教材を選んでください'
+
             # 新規追加時、GETパラメータmaterialからmaterial_idを取得
             material_id = request.GET.get('material')
             if material_id:
-                # オートコンプリートURLにmaterial_idをクエリパラメータとして追加
                 url = reverse('admin:learning_content_materialnode_autocomplete')
                 params = urlencode({'material_id': material_id})
-                kwargs['widget'].attrs['data-autocomplete-url'] = f"{url}?{params}"
+                formfield.widget.attrs['data-autocomplete-url'] = f"{url}?{params}"
+
+            return formfield
+
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-'''
+
+    
 
 # Progress管理画面カスタマイズ
 # --------------------------------------------------------------------------
 @admin.register(Progress)
 class ProgressAdmin(admin.ModelAdmin):
-    #list_display = ('material_node', 'status', 'date')  # 一覧で表示される列
-    #search_fields = ('material_node__title',)  # レッスンタイトルで検索可能に
-    list_display = ('status', 'date')
-    search_fields = ()
+    list_display = ('material_node', 'status', 'date')  # 一覧で表示される列
+    search_fields = ('material_node__title',)  # レッスンタイトルで検索可能に
+    #list_display = ('status', 'date')
+    #search_fields = ()
     list_filter = ('status', 'date')  # ステータスや日付で絞り込み

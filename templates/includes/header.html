@@ -9,20 +9,20 @@
           
           <!-- 教材追加ボタン -->
           <li class="nav-item me-3">
-            <a class="nav-link" href="{% url 'materials:material_create' %}">教材追加</a>
+            <a class="nav-link" href="{% url 'learning_content:material_create' %}">教材追加</a>
           </li>
 
           <!-- ノード追加ボタン（material があるとき） -->
-          {% if material and material.pk %}
+          {% if material|default_if_none:'' %}
             <li class="nav-item me-3">
-              <a class="nav-link" href="{% url 'materials:materialnode_create' material.pk %}">ノード追加</a>
+              <a class="nav-link" href="{% url 'learning_content:material_node_create' material.id %}">ノード追加</a>
             </li>
           {% endif %}
 
           <!-- 進捗記録ボタン（node があるとき） -->
-          {% if node and node.pk %}
+          {% if node|default_if_none:'' %}
             <li class="nav-item me-3">
-              <a href="{% url 'materials:progress_create' node.pk %}" class="btn btn-outline-success btn-sm">
+              <a href="{% url 'learning_content:progress_create' node.pk %}" class="btn btn-outline-success btn-sm">
                 進捗を記録
               </a>
             </li>

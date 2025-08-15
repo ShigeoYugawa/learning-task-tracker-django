@@ -1,33 +1,54 @@
 # apps/learning_content/forms.py
 
 from django import forms
-from .models import Material, MaterialNode, Progress  # 各モデルをインポート
+from django.db.models import Q
+from .models import Material, MaterialNode, Progress
 
-# ----------------------------------------
-# 教材（Material）用フォーム
-# ModelFormを継承し、Materialモデルのtitle, descriptionフィールドをフォームに使用
+
 class MaterialForm(forms.ModelForm):
+    """
+    教材（Material）用フォーム
+    ModelFormを継承し、Materialモデルのtitle, descriptionフィールドをフォームに使用
+    """
+    
     class Meta:
-        model = Material  # 対象モデル
+        model = Material
         fields = ['title', 'description']  # フォームに表示・入力するフィールド
 
 
-# ----------------------------------------
-# 教材（Material）用フォーム
 class MaterialNodeForm(forms.ModelForm):
+    """
+    教材ノード（MaterialNode）用フォーム
+    """
+
     class Meta:
         model = MaterialNode
-        fields = ['material', 'parent', 'title', 'description', 'order']
+        fields = ['title', 'description', 'parent', 'order']
+        labels = {
+            'title': '項目名',
+            'description': '説明',
+            'parent': '上位項目',
+            'order': '表示順番号',
+        }
+        help_texts = {
+            'order': '同じ章の中で順番が重複しないように、他の項目と異なる番号を指定してください。',
+        }
 
-    def __init__(self, *args, **kwargs):
+
+    def __init__(self, *args, **kwargs) -> None:
+        material = kwargs.pop('material', None)
         super().__init__(*args, **kwargs)
-        # parentフィールドの選択肢を絞り込むなどのカスタマイズも可能（必要に応じて）
+        if material:
+            self.fields['parent'].queryset = material.nodes.all()
 
 
-# ----------------------------------------
-# 進捗（Progress）用フォーム
-# Progressモデルのstatusフィールドだけをフォームに使用（例: 進捗状況のステータス）
+
 class ProgressForm(forms.ModelForm):
+    """
+    進捗（Progress）用フォーム
+    Progressモデルのstatusフィールドだけをフォームに使用（例: 進捗状況のステータス）
+    """
+
     class Meta:
         model = Progress
         fields = ['status']

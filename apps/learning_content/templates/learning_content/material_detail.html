@@ -1,21 +1,36 @@
-<!-- learning_content/templates/material_detail.html -->
+<!-- learning_content/templates/learning_content/material_detail.html -->
 
 {% extends 'base.html' %}
-
-{% block title %}{{ material.title }}{% endblock %}
+{% load widget_tweaks %}
 
 {% block content %}
-  <h1 class="mb-3">{{ material.title }}</h1>
-  <p class="mb-4">{{ material.description }}</p>
+<div class="card mb-3">
+  <div class="card-body">
+    <h2 class="card-title">{{ material.title }}{% if material.is_template %} (テンプレート){% endif %}</h2>
+    <p class="card-text">{{ material.description }}</p>
+    
+    {% if material.is_template %}
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'learning_content:material_duplicate' material.pk %}">
+        このテンプレートを複製
+      </a>
+    {% endif %}
 
-  <h2 class="mb-3">構成</h2>
-  <ul class="list-group">
-    {% for node in material.nodes.all %}
-      <li class="list-group-item">
-        {{ node.title }}
-      </li>
-    {% empty %}
-      <li class="list-group-item">構成が登録されていません。</li>
-    {% endfor %}
-  </ul>
+    {% if user.is_authenticated %}
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'learning_content:material_update' material.id %}">
+        教材を編集
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<h3 class="mt-4">学習項目</h3>
+<a class="btn btn-sm btn-primary mb-3" href="{% url 'learning_content:material_node_create' material.pk %}">
+  学習項目を追加
+</a>
+
+<div class="accordion" id="nodeAccordion">
+    {% include "learning_content/_node_list.html" with nodes=top_nodes user=user %}
+</div>
+
+<a class="btn btn-secondary mt-3" href="{% url 'learning_content:material_list' %}">教材一覧へ戻る</a>
 {% endblock %}

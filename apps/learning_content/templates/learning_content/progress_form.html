@@ -1,21 +1,25 @@
 <!-- apps/learning_content/templates/learning_content/progress_form.html -->
 
 {% extends 'base.html' %}
-{% load widget_tweaks %}
-
-{% block title %}進捗登録{% endblock %}
 
 {% block content %}
-  <h2 class="mb-4">{{ material_node.title }} の進捗を記録</h2>
+<h2 class="mb-4">進捗登録: {{ material_node.title }}</h2>
 
-  <form method="post">
+<form method="post" class="mb-3">
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="id_status" class="form-label">学習状況</label>
-      {{ form.status|add_class:"form-select" }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">保存</button>
-    <a href="{% url 'learning_content:materialnode_detail' material_node.pk %}" class="btn btn-secondary ms-2">戻る</a>
-  </form>
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field|add_class:"form-control" }}
+            {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">登録</button>
+    <a href="{% url 'learning_content:material_detail' material_node.material.pk %}" class="btn btn-secondary ms-2">戻る</a>
+</form>
 {% endblock %}

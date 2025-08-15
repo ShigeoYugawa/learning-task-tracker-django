@@ -1,19 +1,51 @@
 # apps/accounts/forms.py
 
-'''
-PoCであるため頻繁な設計変更を考慮して、統合したモジュールとしています。
-'''
-
+from typing import Any, Dict
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser
-from django.contrib.auth import authenticate, get_user_model
+from .models import CustomUser, Role
+from django.contrib.auth import authenticate
 from django.conf import settings
 
-#
-# ユーザー登録フォーム（メールアドレス必須）
-# -------------------------------------------------------------------
+
+class CustomUserAdminChangeForm(forms.ModelForm):
+    """
+    管理画面用のユーザー編集フォーム
+    - roles を個別チェックボックスで表示
+    """
+    roles = forms.ModelMultipleChoiceField(
+        queryset=Role.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+
+
+class CustomUserAdminCreationForm(UserCreationForm):
+    """
+    管理画面用のユーザー作成フォーム
+    - roles を個別チェックボックスで表示
+    """
+    roles = forms.ModelMultipleChoiceField(
+        queryset=Role.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'roles')
+
+
 class CustomUserCreationForm(UserCreationForm):
+    """
+    UserCreationForm を拡張したユーザー登録フォーム。
+    email を必須フィールドとして追加し、ニックネームとパスワードを入力。
+    """
+
     email = forms.EmailField(
         label="メールアドレス",
         required=True,
@@ -52,24 +84,37 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ('email', 'username', 'password1', 'password2')
 
-    def clean_email(self):
+
+    def clean_email(self) -> str:
+        """
+        emailフィールド専用のバリデーションメソッド
+
+        呼び出されるタイミング：
+        - フォームの is_valid() を呼んだとき
+        - 自動的に clean_email() が呼ばれ、戻り値が cleaned_data に格納される
+
+        処理内容：
+        1. 入力された email を取得
+        2. DB に同じ email が既に存在するか確認
+        3. 存在する場合は ValidationError を発生させる
+        4. 存在しない場合は email を返す（cleaned_data に格納される）
+        """
+
+        # フォームに入力された email の値を取得
         email = self.cleaned_data.get('email')
+        # 既に同じ email が存在する場合はエラー
         if CustomUser.objects.filter(email=email).exists():
             raise forms.ValidationError("このメールアドレスは既に使用されています。")
         return email
 
 
-#
-# ログインフォーム（メールアドレスベースで認証）
-# -------------------------------------------------------------------
 class CustomLoginForm(AuthenticationForm):
     """
-    AUTH_METHOD（email / username / both）に応じて
-    ログイン画面の username フィールドのラベルやプレースホルダを切り替える。
-    Djangoの認証システム互換のため、フォーム内部のフィールド名は必ず 'username' のまま使用する。
+    カスタムログインフォーム。メールアドレス・ユーザー名・両方の認証方式に対応。
+    フォーム内部ではフィールド名 'username' を使用し、AUTH_METHOD に応じてラベルとプレースホルダを動的に変更。
     """
 
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, request=None, *args, **kwargs) -> None:
         # 認証時に使用するリクエストオブジェクトを保持
         self.request = request
         # 認証結果を格納する内部キャッシュを初期化
@@ -122,40 +167,55 @@ class CustomLoginForm(AuthenticationForm):
             'placeholder': 'パスワード'
         })
 
-    def confirm_login_allowed(self, user):
+
+    def confirm_login_allowed(self, user) -> None:
         """
-        ログイン許可の判定を行うメソッド。
-        ここではユーザーがアクティブ状態かどうかをチェックし、
-        非アクティブならログインを拒否する。
+        ユーザーのログイン許可を確認するメソッド。
+
+        呼び出されるタイミング：
+        - Django の AuthenticationForm などからログイン処理時に呼ばれる
+
+        処理内容：
+        1. ユーザーがアクティブかどうかを確認
+        2. アクティブでなければ ValidationError を発生させ、ログインを拒否
+        3. 問題なければ何も返さず正常終了
         """
+
         if not user.is_active:
-            raise forms.ValidationError("このアカウントは無効です。", code='inactive')
+            raise forms.ValidationError(
+                "このアカウントは無効です。", 
+                code='inactive'
+            )
 
-    def clean(self):
+
+    def clean(self) -> Dict[str, Any]:
         """
-        フォームのバリデーション処理をオーバーライド。
-        入力された username と password を基に認証処理を実施する。
+        フォーム全体のバリデーション処理をオーバーライド。
 
-        認証は backends.py の FlexibleAuthBackend.authenticate() に委任し、
-        認証成功すれば user_cache にユーザーオブジェクトを保持する。
-
-        失敗した場合は汎用エラーメッセージを返す。
+        処理内容：
+        1. username と password を取得
+        2. FlexibleAuthBackend.authenticate() で認証
+        3. 認証成功なら self.user_cache にユーザーオブジェクトを保持
+        4. 認証失敗なら ValidationError を発生
+        5. confirm_login_allowed() でログイン可否チェック
+        6. 最終的に cleaned_data を返す
         """
+
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
 
         if username and password:
-            # settings.AUTH_METHODに応じた認証ロジックを持つ
-            # FlexibleAuthBackend による authenticate を呼び出す
+            # 認証処理
             self.user_cache = authenticate(
                 self.request, username=username, password=password
             )
             if self.user_cache is None:
-                # 認証失敗時のエラー
-                raise forms.ValidationError("ログインID または パスワードが正しくありません。")
+                raise forms.ValidationError(
+                    "ログインID または パスワードが正しくありません。"
+                )
 
             # ログイン許可判定（例：is_active）
             self.confirm_login_allowed(self.user_cache)
 
-        # 最終的にバリデーション済みの cleaned_data を返す
+        # バリデーション済みデータを返す
         return self.cleaned_data
